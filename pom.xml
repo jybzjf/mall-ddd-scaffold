@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>mall</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>mall-api</module>
+        <module>mall-adapter</module>
+        <module>mall-provider</module>
+        <module>mall-infrastructure</module>
+        <module>mall-domain</module>
+        <module>mall-utils</module>
+        <module>mall-aggregation</module>
+        <module>mall-test</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- PMD插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.12.0</version>
+                <configuration>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <!--<targetJdk>${java.version}</targetJdk>-->
+                    <printFailingErrors>true</printFailingErrors>
+                    <skipEmptyReport>false</skipEmptyReport>
+                    <!-- 代码检查规则 -->
+                    <rulesets>
+                        <!--AliCheck原生java规则共53条，裁剪掉了13条-->
+                        <ruleset>${basedir}/../rulesets/java/ali-comment.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-concurrent.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-constant.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-exception.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-flowcontrol.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-naming.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-oop.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-orm.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-other.xml</ruleset>
+                        <ruleset>${basedir}/../rulesets/java/ali-set.xml</ruleset>
+                    </rulesets>
+                    <!--<minimumPriority>2</minimumPriority>-->
+                    <!--扫描级别，小于等于这个级别的错误代码将不通过扫描。不配默认是5-->
+                    <failurePriority>3</failurePriority>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources/java</excludeRoot>
+                        <excludeRoot>target/test-classes</excludeRoot>
+                    </excludeRoots>
+                </configuration>
+
+                <executions>
+                    <!-- 绑定pmd:check到verify生命周期 -->
+                    <execution>
+                        <id>pmd-check-verify</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <!-- 绑定pmd:pmd到site生命周期 -->
+                    <execution>
+                        <id>pmd-pmd-site</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>pmd</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <dependencies>
+                    <!-- p3c依赖 -->
+                    <dependency>
+                        <groupId>com.alibaba.p3c</groupId>
+                        <artifactId>p3c-pmd</artifactId>
+                        <version>2.0.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- findbugs插件 ：静态检查代码的错误-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+                <configuration>
+                    <!-- 设置分析工作的等级，可以为Min、Default和Max -->
+                    <effort>Low</effort>
+                    <!-- Low、Medium和High (Low最严格) -->
+                    <threshold>Medium</threshold>
+                    <failOnError>true</failOnError>
+                    <includeTests>true</includeTests>
+                    <excludeFilterFile>${basedir}/../rulesets/findbugs-exclude-filter.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>run-findbugs</id>
+                        <!-- 在compile 阶段触发执行findbugs检查，比如执行 mvn clean install，就会执行findbugs:check命令-->
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal> <!--指定执行check命令-->
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-gui</id>
+                        <!-- 在compile 阶段触发执行findbugs检查，比如执行 mvn clean install，就会执行findbugs:check命令-->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>findbugs</goal> <!--指定执行check命令-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
