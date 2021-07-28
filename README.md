@@ -1,0 +1,1 @@
+# mall-ddd-scaffold
